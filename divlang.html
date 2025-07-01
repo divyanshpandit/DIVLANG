@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Div-lang IDE HUEHUE</title>
+  <style>
+    body {
+      background: #111;
+      color: #eee;
+      font-family: monospace;
+      padding: 20px;
+    }
+    textarea {
+      width: 100%;
+      height: 250px;
+      background: #222;
+      color: #eee;
+      border: none;
+      padding: 10px;
+      font-size: 16px;
+    }
+    button {
+      margin: 10px 5px 10px 0;
+      font-size: 16px;
+    }
+    pre#outputArea {
+      background: #222;
+      padding: 10px;
+      min-height: 100px;
+      white-space: pre-wrap;
+    }
+    .howto {
+      background: #222;
+      padding: 15px;
+      margin-top: 20px;
+      white-space: pre-wrap;
+      font-size: 14px;
+      border: 1px solid #555;
+    }
+  </style>
+</head>
+<body>
+  <h1> Div-lang IDE HUEHUE</h1>
+  <textarea id="codeArea">
+// sample program
+act square[n] {
+  return n * n
+}
+
+mana x = 5
+pt[square[x]]
+
+agar[x > 3] {
+  pt[abcd"x is big"]
+} yafir {
+  pt[abcd"x is small"]
+}
+
+mana y = 3
+jabtak[y > 0] {
+  pt[y]
+  mana y = y - 1
+}
+  </textarea>
+  <br>
+  <button id="runBtn">Run</button>
+  <button id="saveBtn">Save .div</button>
+  <pre id="outputArea"></pre>
+
+  <!-- HOW TO GUIDE -->
+  <div class="howto">
+Div-lang Programming Guide
+
+==============================
+# Keywords:
+mana     => declare variable
+pt       => print to output
+agar     => if
+yafir    => else
+jabtak   => while
+act      => define function
+return   => return from function
+
+# Symbols:
+[]       => used instead of ()
+{}       => used for code blocks
+abcd""   => string literals (example: abcd"x is big")
+
+# Comments:
+use // for comments
+
+# Examples:
+
+1. Variable Declaration
+--------------------------
+mana x = 5
+
+2. Printing
+--------------------------
+pt[abcd"Hello world"]
+pt[x]
+
+3. If / Else
+--------------------------
+agar [x > 3] {
+    pt[abcd"x is big"]
+} yafir {
+    pt[abcd"x is small"]
+}
+
+4. While Loops
+--------------------------
+mana y = 3
+jabtak [y > 0] {
+    pt[y]
+    mana y = y - 1
+}
+
+5. Functions
+--------------------------
+act square[n] {
+    return n * n
+}
+
+mana z = square[4]
+pt[z]   // prints 16
+
+6. Strings
+--------------------------
+abcd"Hello world" is a string literal
+
+7. Operators
+--------------------------
++, -, *, /, >, <, ==, !=
+
+# Full Example
+--------------------------
+act add[a, b] {
+    return a + b
+}
+
+mana x = 3
+mana y = 4
+mana result = add[x, y]
+pt[abcd"The result is " + result]
+
+# Saving your code
+--------------------------
+Click the **Save .div** button on the web interface
+to save your code as a file ending in .div
+
+# Running
+--------------------------
+- Write your code in the textarea on the webpage
+- Click **Run** to see the output
+
+==============================
+Happy Coding in Div-lang! HUEHUE
+==============================
+  </div>
+
+  <script>
+    function runCode() {
+      const codeText = document.getElementById("codeArea").value;
+      const outputArea = document.getElementById("outputArea");
+      outputArea.textContent = "";
+      function output(x) {
+        outputArea.textContent += x + "\n";
+      }
+      try {
+        let code = codeText;
+        code = code.replace(/abcd"([^"]*)"/g, '"$1"');
+        code = code.replace(/\bact\s+(\w+)\s*\[([^\]]*)\]\s*\{/g, "function $1($2) {");
+        code = code.replace(/agar\s*\[([^\]]*)\]\s*\{/g, "if ($1) {");
+        code = code.replace(/\}\s*yafir\s*\{/g, "} else {");
+        code = code.replace(/jabtak\s*\[([^\]]*)\]\s*\{/g, "while ($1) {");
+        code = code.replace(/\bmana\s+(\w+)\s*=/g, "var $1 =");
+        code = code.replace(/pt\s*\[([^\]]*)\]/g, "output($1)");
+        code = code.replace(/(\w+)\s*\[([^\]]*)\]/g, "$1($2)");
+        const fn = new Function("output", code);
+        fn(output);
+      } catch (e) {
+        output("Error: " + e.message);
+      }
+    }
+    document.getElementById("runBtn").addEventListener("click", runCode);
+    document.getElementById("saveBtn").addEventListener("click", () => {
+      const code = document.getElementById("codeArea").value;
+      const blob = new Blob([code], { type: "text/plain" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "code.div";
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    });
+  </script>
+</body>
+</html>
